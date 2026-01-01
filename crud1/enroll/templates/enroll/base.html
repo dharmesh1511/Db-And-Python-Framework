@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Doctor Finder{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'enroll/css/bootstrap.min.css' %}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background: #2c3e50;
+        }
+        .navbar a {
+            color: white !important;
+            margin-right: 15px;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            margin-top: auto;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .btn-custom {
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">Doctor Finder</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="/add_doc">Add Doc</a></li>
+                <li class="nav-item"><a class="nav-link" href="/javascript_validation">JS Validation</a></li>
+                <li class="nav-item"><a class="nav-link" href="/send_sms">Send SMS</a></li>
+                <li class="nav-item"><a class="nav-link" href="/ajaxcrud">Ajax CRUD</a></li>
+                {% endif %}
+            </ul>
+            <div class="d-flex">
+                {% if user.is_authenticated %}
+                    <span class="text-white me-2">Hello {{ user.username }}</span>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm btn-custom">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-success btn-sm btn-custom">Login</a>
+                    <a href="{% url 'signup' %}" class="btn btn-outline-primary btn-sm btn-custom">Signup</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Page content -->
+<div class="container mt-5 mb-5">
+    {% block content %}{% endblock %}
+</div>
+
+<footer>
+    © 2025 Doctor Finder Project | Django Full Stack
+</footer>
+
+<script src="{% static 'enroll/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

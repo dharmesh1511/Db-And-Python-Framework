@@ -1,0 +1,143 @@
+{% extends 'enroll/base.html' %}
+{% block title %}AJAX CRUD | Doctor Finder{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4 shadow-lg">
+            <h3 class="text-center mb-4">Doctor / Item Management</h3>
+
+            <!-- Add Item Form -->
+            <form id="item-form" class="mb-4">
+                {% csrf_token %}
+                <div class="row g-2">
+                    <div class="col-md-5">
+                        <input type="text" id="name" placeholder="Item Name" class="form-control" required>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" id="description" placeholder="Description" class="form-control" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Add</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Items List -->
+            <div id="items-container">
+                {% for item in items %}
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded item" data-id="{{ item.id }}">
+                    <div>
+                        <strong class="name">{{ item.name }}</strong> - <span class="description">{{ item.description }}</span>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-warning edit">Edit</button>
+                        <button class="btn btn-sm btn-danger delete">Delete</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #74ebd5, #acb6e5);
+    }
+    .card {
+        border-radius: 15px;
+    }
+    .btn {
+        border-radius: 8px;
+    }
+    .item:hover {
+        background-color: #f1f1f1;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script>
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    $(document).ready(function() {
+        // Add Item
+        $('#item-form').submit(function(e) {
+            e.preventDefault();
+            let name = $('#name').val();
+            let description = $('#description').val();
+            let csrfToken = getCSRFToken();
+
+            $.ajax({
+                url: "/create/",
+                type: "POST",
+                data: {name: name, description: description},
+                headers: {"X-CSRFToken": csrfToken},
+                success: function(data) {
+                    $('#items-container').append(
+                        `<div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded item" data-id="${data.id}">
+                            <div><strong class="name">${data.name}</strong> - <span class="description">${data.description}</span></div>
+                            <div>
+                                <button class="btn btn-sm btn-warning edit">Edit</button>
+                                <button class="btn btn-sm btn-danger delete">Delete</button>
+                            </div>
+                        </div>`
+                    );
+                    $('#name').val('');
+                    $('#description').val('');
+                }
+            });
+        });
+
+        // Edit Item
+        $(document).on('click', '.edit', function() {
+            let itemDiv = $(this).closest('.item');
+            let itemId = itemDiv.data('id');
+            let name = itemDiv.find('.name').text();
+            let description = itemDiv.find('.description').text();
+
+            let newName = prompt("Edit Name:", name);
+            let newDescription = prompt("Edit Description:", description);
+
+            if (newName !== null && newDescription !== null) {
+                let csrfToken = getCSRFToken();
+
+                $.ajax({
+                    url: `/update/${itemId}/`,
+                    type: "POST",
+                    data: { name: newName, description: newDescription },
+                    headers: { "X-CSRFToken": csrfToken },
+                    success: function(data) {
+                        itemDiv.find('.name').text(data.name);
+                        itemDiv.find('.description').text(data.description);
+                    },
+                    error: function() {
+                        alert("Error updating item.");
+                    }
+                });
+            }
+        });
+
+        // Delete Item
+        $(document).on('click', '.delete', function() {
+            let itemDiv = $(this).closest('.item');
+            let itemId = itemDiv.data('id');
+            let csrfToken = getCSRFToken();
+
+            $.ajax({
+                url: `/delete/${itemId}/`,
+                type: "POST",
+                headers: { "X-CSRFToken": csrfToken },
+                success: function() {
+                    itemDiv.remove();
+                },
+                error: function() {
+                    alert("Error deleting item.");
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

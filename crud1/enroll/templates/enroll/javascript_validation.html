@@ -1,0 +1,95 @@
+{% extends 'enroll/base.html' %}
+{% block title %}JS Form Validation | Doctor Finder{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-5 shadow-lg">
+            <h3 class="text-center mb-4">Patient Registration</h3>
+
+            <form id="myForm">
+                <!-- Name -->
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" id="name" name="name" class="form-control">
+                    <div class="text-danger mt-1" id="nameError"></div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" id="email" name="email" class="form-control">
+                    <div class="text-danger mt-1" id="emailError"></div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control">
+                    <div class="text-danger mt-1" id="passwordError"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #74ebd5, #acb6e5);
+    }
+    .card {
+        border-radius: 15px;
+    }
+    .btn-success {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+    .btn-success:hover {
+        opacity: 0.85;
+    }
+</style>
+
+<script>
+document.getElementById("myForm").addEventListener("submit", function(event) {
+    let valid = true;
+
+    // Name Validation
+    let name = document.getElementById("name").value;
+    let nameError = document.getElementById("nameError");
+    if (name.trim() === "") {
+        nameError.textContent = "Name is required";
+        valid = false;
+    } else {
+        nameError.textContent = "";
+    }
+
+    // Email Validation
+    let email = document.getElementById("email").value;
+    let emailError = document.getElementById("emailError");
+    let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,4}$/;
+    if (!email.match(emailPattern)) {
+        emailError.textContent = "Enter a valid email";
+        valid = false;
+    } else {
+        emailError.textContent = "";
+    }
+
+    // Password Validation
+    let password = document.getElementById("password").value;
+    let passwordError = document.getElementById("passwordError");
+    if (password.length < 6) {
+        passwordError.textContent = "Password must be at least 6 characters";
+        valid = false;
+    } else {
+        passwordError.textContent = "";
+    }
+
+    if (!valid) {
+        event.preventDefault();
+    }
+});
+</script>
+{% endblock %}
