@@ -120,18 +120,6 @@ def send_sms(request):
    
     return JsonResponse({'message': 'OTP sent successfully'})
 
-
-def verify_otp(request):
-    phone_number = request.GET.get('phone')
-    entered_otp = request.GET.get('otp')
-    stored_otp = cache.get(phone_number)
-   
-    if stored_otp and entered_otp == stored_otp:
-        cache.delete(phone_number)
-        return JsonResponse({'message': 'OTP verified successfully'})
-    else:
-        return JsonResponse({'error': 'Invalid OTP'})
-
 # ajex crud
 
 def item_list(request):
